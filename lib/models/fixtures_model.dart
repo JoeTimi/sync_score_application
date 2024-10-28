@@ -139,7 +139,11 @@ class Result {
       fkStageKey: json["fk_stage_key"],
       stageName: json["stage_name"],
       leagueGroup: json["league_group"],
+<<<<<<< HEAD
       // goalscorers: json["goalscorers"] == null ? [] : List<Goalscorer>.from(json["goalscorers"].map((x) => Goalscorer.fromJson(x))),
+=======
+      goalscorers: json["goalscorers"] == null ? [] : List<Goalscorer>.from(json["goalscorers"].map((x) => Goalscorer.fromJson(x))),
+>>>>>>> e6ff797 (Test)
       substitutes: json["substitutes"] == null ? [] : List<Substitute>.from(json["substitutes"].map((x) => Substitute.fromJson(x))),
       cards: json["cards"] == null ? [] : List<CardElement>.from(json["cards"].map((x) => CardElement.fromJson(x))),
       // vars: json["vars"] == null ? null : Vars.fromJson(json["vars"]),

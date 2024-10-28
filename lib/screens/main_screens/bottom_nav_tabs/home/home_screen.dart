@@ -4,12 +4,11 @@ import 'package:sync_score_application/core/clickable_widget.dart';
 import 'package:sync_score_application/core/consts.dart';
 import 'package:sync_score_application/screens/initial_screens/auth_screens/auth_widgets.dart';
 import 'package:sync_score_application/screens/main_screens/bottom_nav_tabs/home/home_tabs/team_detail/team_detail_two_screen.dart';
+import 'package:sync_score_application/screens/main_screens/bottom_nav_tabs/home/home_tabs/team_detail/team_two_tabs/matches_tab.dart';
 import 'package:sync_score_application/screens/main_screens/bottom_nav_tabs/home/home_widgets.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'home_tabs/team_detail/team_detail_one_screen.dart';
-import 'package:sync_score_application/models/fixtures_model.dart';
-import 'package:sync_score_application/fixtures_service.dart';
 
+import 'home_tabs/team_detail/team_detail_one_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -23,74 +22,15 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> {
   DateTime selectedDate = DateTime.now();
-  bool isLoading = true;
-  List<Result> fixturesList = [];
-  final FixtureService fixtureService = FixtureService();
 
-  late TabController _tabController;
-  bool isShowCalendar = false;
+  int selectedIndex = 0;
   bool isShowFilter = false;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchFixtures();
-    _tabController = TabController(vsync: this, length: 4);
-    _tabController.addListener(_onTabChanged);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  Future<void> fetchFixtures() async {
-    try {
-      Fixtures fixtures = await fixtureService.fetchFixtures();
-      setState(() {
-        fixturesList = fixtures.result ?? [];
-        isLoading = false;
-      });
-    } catch (error, stackTrace) {
-      debugPrint('Error fetching fixtures: $error');
-      debugPrint('Stack trace: $stackTrace');
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  void _onTabChanged() {
-    setState(() {});
-  }
-
-  List<Result> getFilteredFixtures() {
-    switch (_tabController.index) {
-      case 0: // "All"
-        return fixturesList;
-      case 1: // "Live"
-        return fixturesList.where((fixture) => fixture.eventLive == '1').toList();
-      case 2: // "Upcoming"
-        return fixturesList.where((fixture) => fixture.eventStatus == 'Upcoming').toList();
-      case 3: // "Finished"
-        return fixturesList.where((fixture) => fixture.eventStatus == 'Finished').toList();
-      default:
-        return fixturesList;
-    }
-  }
-
+  bool isShowCalendar = false;
 
   @override
   Widget build(BuildContext context) {
-    Map<String, List<Result>> fixturesByLeague = {};
-
-    for (var fixture in fixturesList) {
-      final leagueName = fixture.leagueName ?? 'Unknown League';
-      fixturesByLeague.putIfAbsent(leagueName, () => []).add(fixture);
-    }
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0xFFFAFAFA),
@@ -106,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       SvgPicture.asset("assets/main_icons/logo.svg"),
                       const TimeDropWidget(),
                       InkWellWidget(
-                        onTap: () {
+                        onTap: (){
                           widget.scaffoldKey.currentState!.openEndDrawer();
                         },
                         child: SvgPicture.asset("assets/main_icons/menu.svg"),
@@ -142,10 +82,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 color: const Color(0xFF5D5669).withOpacity(.16),
                               ),
                               child: TabBar(
-                                controller: _tabController,
                                 labelColor: mainAppColor,
                                 unselectedLabelColor:
-                                blackColor.withOpacity(.48),
+                                    blackColor.withOpacity(.48),
                                 dividerHeight: 0,
                                 isScrollable: true,
                                 tabAlignment: TabAlignment.start,
@@ -169,28 +108,28 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 tabs: const [
                                   Padding(
                                     padding:
-                                    EdgeInsets.symmetric(horizontal: 15),
+                                        EdgeInsets.symmetric(horizontal: 15),
                                     child: Tab(
                                       text: "All",
                                     ),
                                   ),
                                   Padding(
                                     padding:
-                                    EdgeInsets.symmetric(horizontal: 15),
+                                        EdgeInsets.symmetric(horizontal: 15),
                                     child: Tab(
                                       text: "LIVE",
                                     ),
                                   ),
                                   Padding(
                                     padding:
-                                    EdgeInsets.symmetric(horizontal: 15),
+                                        EdgeInsets.symmetric(horizontal: 15),
                                     child: Tab(
                                       text: "Upcoming",
                                     ),
                                   ),
                                   Padding(
                                     padding:
-                                    EdgeInsets.symmetric(horizontal: 15),
+                                        EdgeInsets.symmetric(horizontal: 15),
                                     child: Tab(
                                       text: "Finished",
                                     ),
@@ -213,11 +152,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           onPressed: () {
                             setState(() {
                               isShowFilter = true;
-
                             });
                           },
                           icon:
-                          SvgPicture.asset("assets/main_icons/a_to_z.svg"),
+                              SvgPicture.asset("assets/main_icons/a_to_z.svg"),
                         ),
                         SvgPicture.asset("assets/main_icons/search.svg"),
                       ],
@@ -225,93 +163,108 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   ),
                 ),
                 Expanded(
-                  child: isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : SingleChildScrollView(
+                  child: SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: dp),
                       child: Column(
-                        children: fixturesByLeague.entries.map<Widget>((entry) {
-                          final leagueName = entry.key;
-                          final leagueFixtures = entry.value;
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TitleWidget(
-                                logo: leagueFixtures.first.leagueLogo ?? 'assets/default_logo.png' ,
-                                name: leagueName,
-                                flag: leagueFixtures.first.countryLogo ?? 'assets/default_flag.png',
-                                countryName: leagueFixtures.first.countryName ?? 'Unknown Country',
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                      TeamDetailTwoScreen(
-                                        leagueName: leagueName,
-                                        leagueLogo: leagueFixtures.first.leagueLogo ?? 'assets/default_logo.png',
-                                        countryName: leagueFixtures.first.countryName ?? 'Unknown country',
-                                        countryLogo: leagueFixtures.first.countryLogo ?? 'assets/default_flag.png',
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              ...leagueFixtures.map((fixture) {
-                                // Parse final score
-                                String eventFinalResult = (fixture.eventFinalResult ?? "0 - 0").toString();
-
-                                List<String> scores = eventFinalResult.split(" - ");
-
-                                // Debugging logs
-                                // debugPrint('Event Final Result: $eventFinalResult');
-                                debugPrint('Parsed Scores: $scores');
-
-                                // Ensure the list has exactly two parts (home and away scores)
-                                int homePoints = 0;
-                                int awayPoints = 0;
-
-                                if (scores.length == 2) {
-                                  homePoints = int.tryParse(scores[0].trim()) ?? 0;
-                                  awayPoints = int.tryParse(scores[1].trim()) ?? 0;
-                                } else {
-                                  debugPrint('Score parsing failed for fixture: ${fixture.eventHomeTeam} vs ${fixture.eventAwayTeam}');
-                                }
-
-
+                        children: <Widget>[
+                          const TitleWidget(
+                            logo: "assets/main_images/team1.png",
+                            name: "Premier League",
+                            flag: "assets/main_icons/flag1.svg",
+                            countryName: "England",
+                          ),
+                          Column(
+                            children: List.generate(
+                              3,
+                              (index) {
                                 return LeagueItemsWidget(
-                                  ft: fixture.eventFtResult.toString(),
-                                  tOneLogo: fixture.homeTeamLogo ?? 'assets/default_logo.png',
-                                  tOneName: fixture.eventHomeTeam ?? 'Home Team',
-                                  tTwoLogo: fixture.awayTeamLogo ?? 'assets/default_logo.png',
-                                  tTwoName: fixture.eventAwayTeam ?? 'Away Team',
-                                  // tOnePoints: homePoints.toString(),
-                                  // tTwoPoints: awayPoints.toString(),
-                                  tOnePoints: (fixture.homeGoals ?? 'N/A').toString(),
-                                  tTwoPoints: (fixture.awayGoals ?? 'N/A').toString(),
-                                  isLive: fixture.eventLive == '1',
-                                  isStared: false,
+                                  ft: "4`",
+                                  tOneLogo: "assets/main_images/team2.png",
+                                  tOneName: "Liverpool",
+                                  tOnePoints: "3",
+                                  tTwoLogo: "assets/main_images/team1.png",
+                                  tTwoName: "Aston Villa ",
+                                  tTwoPoints: "1",
+                                  isLive: index == 0 ? true : false,
+                                  isStared: index == 0 ? true : false,
                                   onTap: () {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
-                                        builder: (BuildContext context) => TeamDetailOneScreen(
-                                          homeTeamName: fixture.eventHomeTeam ?? 'Home Team',
-                                          awayTeamName: fixture.eventAwayTeam ?? 'Away Team',
-                                          homeTeamLogo: fixture.homeTeamLogo ?? 'assets/default_logo.png',
-                                          awayTeamLogo: fixture.awayTeamLogo ?? 'assets/default_logo.png',
-                                          finalScore: (fixture.eventFinalResult ?? "0 - 0").toString(),
-                                          leagueName: fixture.leagueName ?? 'League Name',
-                                          statusItems: [], // Assuming you want to show the final score),
-
+                                        builder: (BuildContext context) =>
+                                            const TeamDetailOneScreen(),
                                       ),
-                                    ),
                                     );
                                   },
                                 );
-                              }),
-                            ],
-                          );
-                        }).toList(),
+                              },
+                            ),
+                          ),
+                          const TitleWidget(
+                            logo: "assets/main_images/team1.png",
+                            name: "Premier League",
+                            flag: "assets/main_icons/flag1.svg",
+                            countryName: "England",
+                          ),
+                          Column(
+                            children: List.generate(
+                              3,
+                              (index) {
+                                return LeagueItemsWidget(
+                                  ft: "4`",
+                                  tOneLogo: "assets/main_images/team2.png",
+                                  tOneName: "Liverpool",
+                                  tOnePoints: "3",
+                                  tTwoLogo: "assets/main_images/team1.png",
+                                  tTwoName: "Aston Villa ",
+                                  tTwoPoints: "1",
+                                  isLive: index == 0 ? true : false,
+                                  isStared: index == 0 ? true : false,
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const TeamDetailTwoScreen(),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          const TitleWidget(
+                            logo: "assets/main_images/team1.png",
+                            name: "Premier League",
+                            flag: "assets/main_icons/flag1.svg",
+                            countryName: "England",
+                          ),
+                          Column(
+                            children: List.generate(
+                              3,
+                              (index) {
+                                return LeagueItemsWidget(
+                                  ft: "4`",
+                                  tOneLogo: "assets/main_images/team2.png",
+                                  tOneName: "Liverpool",
+                                  tOnePoints: "3",
+                                  tTwoLogo: "assets/main_images/team1.png",
+                                  tTwoName: "Aston Villa ",
+                                  tTwoPoints: "1",
+                                  isLive: index == 0 ? true : false,
+                                  isStared: index == 0 ? true : false,
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const TeamDetailOneScreen(),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -378,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                   child: TabBar(
                                     labelColor: mainAppColor,
                                     unselectedLabelColor:
-                                    blackColor.withOpacity(.48),
+                                        blackColor.withOpacity(.48),
                                     dividerHeight: 0,
                                     padding: EdgeInsets.zero,
                                     labelPadding: const EdgeInsets.symmetric(
@@ -442,7 +395,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                   child: TabBar(
                                     labelColor: mainAppColor,
                                     unselectedLabelColor:
-                                    blackColor.withOpacity(.48),
+                                        blackColor.withOpacity(.48),
                                     dividerHeight: 0,
                                     padding: EdgeInsets.zero,
                                     labelPadding: const EdgeInsets.symmetric(
@@ -628,47 +581,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ],
         ),
       ),
-    );}
-
-
-  List<StatusItem> getStatusItems(Result fixture) {
-    // This function should return a list of StatusItem based on the match events
-    List<StatusItem> items = [];
-
-    // Add logic to populate items based on the fixture data
-    // For example:
-    items.add(StatusItem(
-      title: "Substitution",
-      subTitle: "${fixture.eventHomeTeam} substituted a player.",
-      icon: "assets/main_icons/up_down.svg",
-      number: "86’",
-      isLeft: true,
-      isShowScore: false,
-      score: "",
-    ));
-    // Add more items based on actual match events...
-
-    return items;
+    );
   }
-
-  }
-
-class StatusItem {
-  final String title;
-  final String subTitle;
-  final String icon;
-  final String number;
-  final bool isLeft;
-  final bool isShowScore;
-  final String score;
-
-  StatusItem({
-    required this.title,
-    required this.subTitle,
-    required this.icon,
-    required this.number,
-    required this.isLeft,
-    required this.isShowScore,
-    required this.score,
-  });
 }
+

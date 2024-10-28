@@ -130,10 +130,10 @@ class _TeamDetailOneScreenState extends State<TeamDetailOneScreen> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  Image.asset(
+                                  Image.network(
                                     height: 40,
                                     width: 40,
-                                    "assets/main_images/team2.png",
+                                    widget.homeTeamLogo,
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
@@ -198,10 +198,10 @@ class _TeamDetailOneScreenState extends State<TeamDetailOneScreen> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  Image.asset(
+                                  Image.network(
                                     height: 40,
                                     width: 40,
-                                    "assets/main_images/team2.png",
+                                    widget.awayTeamLogo,
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
