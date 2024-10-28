@@ -158,7 +158,7 @@ class _CreateAccPassScreenState extends State<CreateAccPassScreen> {
                           bottom: 20,
                         ),
                         Text(
-                          widget.email,
+                          widget.name,
                           style: const TextStyle(
                             color: textColorOne,
                             fontSize: 16,
@@ -167,7 +167,7 @@ class _CreateAccPassScreenState extends State<CreateAccPassScreen> {
                         ),
                         const SizedBox(height: 20,),
                         Text(
-                          widget.name,
+                          widget.email,
                           style: const TextStyle(
                             color: textColorOne,
                             fontSize: 16,

@@ -9,7 +9,7 @@ import 'package:sync_score_application/core/clickable_widget.dart';
 import 'package:sync_score_application/core/consts.dart';
 import 'package:sync_score_application/screens/initial_screens/auth_screens/create_acc_pass_screen.dart';
 import 'package:sync_score_application/screens/initial_screens/auth_screens/login_screen.dart';
-
+import 'package:intl/intl.dart';
 import '../../../core/text_form_field_widget.dart';
 import 'auth_widgets.dart';
 
@@ -77,8 +77,9 @@ class _CreateAccEmailScreenState extends State<CreateAccEmailScreen> {
     );
 
     if (pickedDate != null) {
+      String formattedDate = DateFormat('MM/dd/yyyy').format(pickedDate);
       setState(() {
-        myDobController.text = "${pickedDate.toLocal()}".split(' ')[0];
+        myDobController.text = formattedDate;
       });
     }
   }
@@ -177,7 +178,7 @@ class _CreateAccEmailScreenState extends State<CreateAccEmailScreen> {
                               labelText: "Date of Birth",
                               myController: myDobController,
                               textInputType: TextInputType.datetime,
-                              validator: RequiredValidator(errorText: "*required"),
+                              validator: RequiredValidator(errorText: "*required").call,
                             ),
                           ),
                         ),

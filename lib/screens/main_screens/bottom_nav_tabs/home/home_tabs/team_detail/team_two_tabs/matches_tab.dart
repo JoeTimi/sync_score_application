@@ -227,18 +227,18 @@ class _MatchesTabState extends State<MatchesTab> {
               ],
             ),
             const SizedBox(height: 20),
-            Text(
-              "Matchday 3 - Summer Olympics Grp. C",
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: blackColor.withOpacity(.48),
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 20),
-            if (selectedStage == 0 || selectedStage == 1)
+            // Text(
+            //   "Matchday 3 - Summer Olympics Grp. C",
+            //   maxLines: 1,
+            //   overflow: TextOverflow.ellipsis,
+            //   style: TextStyle(
+            //     color: blackColor.withOpacity(.48),
+            //     fontSize: 10,
+            //     fontWeight: FontWeight.w500,
+            //   ),
+            // ),
+            // const SizedBox(height: 20),
+            if (selectedStage == 0 || selectedStage == 1 || selectedStage == 2)
               FutureBuilder<Welcome>(
                 future: _matchesFuture,
                 builder: (context, snapshot) {
@@ -259,23 +259,25 @@ class _MatchesTabState extends State<MatchesTab> {
                         final formattedDate = match.eventDate != null
                             ? DateFormat('MM/dd/yyyy').format(match.eventDate!)
                             : 'Date Unavailable';
-                        return MatchesItemsWidget(
-                          tOneLogo: match.homeTeamLogo ?? 'https://default-image-url.com/placeholder.png', // Default image if null
-                          tTwoName: match.eventAwayTeam ?? 'Unknown Away Team', // Default text if null
-                          tTwoLogo: match.awayTeamLogo ?? 'https://default-image-url.com/placeholder.png', // Default image if null
-                          tOneName: match.eventHomeTeam ?? 'Unknown Home Team', // Default text if null
-                          time: match.eventTime ?? 'Time Unavailable', // Adjust based on your model
-                          date: formattedDate, // Adjust based on your model
-                          onTap: () {
-                            if (selectedStage == 1) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                  const LiveScreen(),
-                                ),
-                              );
-                            }
-                          },
+                        return Expanded(
+                          child: MatchesItemsWidget(
+                            tOneLogo: match.homeTeamLogo ?? 'https://default-image-url.com/placeholder.png', // Default image if null
+                            tTwoName: match.eventAwayTeam ?? 'Unknown Away Team', // Default text if null
+                            tTwoLogo: match.awayTeamLogo ?? 'https://default-image-url.com/placeholder.png', // Default image if null
+                            tOneName: match.eventHomeTeam ?? 'Unknown Home Team', // Default text if null
+                            time: match.eventTime ?? 'Time Unavailable', // Adjust based on your model
+                            date: formattedDate, // Adjust based on your model
+                            onTap: () {
+                              if (selectedStage == 1) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                    const LiveScreen(),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
                         );
                       },
                     );

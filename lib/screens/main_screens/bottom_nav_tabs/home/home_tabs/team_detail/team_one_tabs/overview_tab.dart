@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sync_score_application/core/consts.dart';
+import 'package:sync_score_application/models/matches_model.dart';
+import 'package:sync_score_application/screens/main_screens/bottom_nav_tabs/home/home_screen.dart';
 
 import '../../../home_widgets.dart';
 
 class OverviewTab extends StatefulWidget {
-  const OverviewTab({super.key});
+  // const OverviewTab({super.key});
+  final String homeTeamName;
+  final String awayTeamName;
+  final String finalScore;
+  final List<StatusItem> statusItems; // A list to hold events (like substitutions, cards, etc.)
+
+  const OverviewTab({
+    super.key,
+    required this.homeTeamName,
+    required this.awayTeamName,
+    required this.finalScore,
+    required this.statusItems,
+  });
 
   @override
   State<OverviewTab> createState() => _OverviewTabState();
@@ -35,12 +49,12 @@ class _OverviewTabState extends State<OverviewTab> {
                       color: const Color(0xFF5D5669).withOpacity(.16),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text(
-                        "FT 2-0",
+                        widget.finalScore,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: blackColor,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -53,22 +67,16 @@ class _OverviewTabState extends State<OverviewTab> {
                     primary: false,
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,
-                    itemCount: 10,
+                    itemCount: widget.statusItems.length,
                     itemBuilder: (BuildContext context, int index) {
                       return StatusItemsWidget(
-                        title: "In: Evann Guessand",
-                        subTitle: "Out: Gaetan Laborde",
-                        icon: index == 3
-                            ? "assets/main_icons/yellow.svg"
-                            : index == 4
-                                ? "assets/main_icons/pink.svg"
-                                : index == 7
-                                    ? "assets/main_icons/goal.svg"
-                                    : "assets/main_icons/up_down.svg",
-                        number: "86’",
-                        isLeft: index.isEven ? true : false,
-                        isShowScore: index == 5 ? true : false,
-                        score: "2-0",
+                        title: widget.statusItems[index].title,
+                        subTitle: widget.statusItems[index].subTitle,
+                        icon: widget.statusItems[index].icon,
+                        number: widget.statusItems[index].number,
+                        isLeft: widget.statusItems[index].isLeft,
+                        isShowScore: widget.statusItems[index].isShowScore,
+                        score: widget.statusItems[index].score,
                       );
                     },
                   ),

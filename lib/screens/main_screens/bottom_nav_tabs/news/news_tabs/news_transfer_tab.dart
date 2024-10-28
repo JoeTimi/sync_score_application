@@ -28,18 +28,17 @@ class _NewsTransferTabState extends State<NewsTransferTab> {
 
   Future<void> _fetchNews() async {
     try {
-      final response = await BaseClient().get('/news'); // Adjust endpoint if necessary
-      final data = json.decode(response); // Decode JSON response
+      final response = await BaseClient().get('/news');
 
-      // Print the API response for debugging
-      debugPrint("API Response: $data");
-
-      // Check and parse the articles from the response
-      if (data != null && data['articles'] != null) {
+      // Check the response type directly, assuming response should already be parsed JSON
+      if (response != null && response['articles'] != null) {
         debugPrint('Data successfully received');
-        if (data['articles'] is List) {
+
+        if (response['articles'] is List) {
           setState(() {
-            newsList = (data['articles'] as List).map<Article>((json) => Article.fromJson(json)).toList();
+            newsList = (response['articles'] as List)
+                .map<Article>((json) => Article.fromJson(json))
+                .toList();
             _isLoading = false;
           });
         }
@@ -78,7 +77,6 @@ class _NewsTransferTabState extends State<NewsTransferTab> {
                       title: article.title ?? "No Title",
                       description: article.description ?? "No Description Available",
                       imageUrl: article.urlToImage ?? "assets/main_images/news3.png",
-                      videoUrl: article.url ?? "", // Placeholder for video if needed
                     ),
                   ),
                 );

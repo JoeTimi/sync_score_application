@@ -28,7 +28,7 @@ class TeamLastStatusWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Image.asset(height: 18, width: 18, logo),
+          Image.network(height: 18, width: 18, logo),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

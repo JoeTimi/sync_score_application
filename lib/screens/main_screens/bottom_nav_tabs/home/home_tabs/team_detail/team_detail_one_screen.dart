@@ -4,13 +4,32 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sync_score_application/core/clickable_widget.dart';
 import 'package:sync_score_application/core/consts.dart';
 import 'package:sync_score_application/base_client.dart';
+import 'package:sync_score_application/screens/main_screens/bottom_nav_tabs/home/home_screen.dart';
 import 'team_one_tabs/line_up_tab.dart';
 import 'team_one_tabs/overview_tab.dart';
 import 'team_one_tabs/stats_tab.dart';
 import 'team_one_tabs/table_tab.dart';
 
 class TeamDetailOneScreen extends StatefulWidget {
-  const TeamDetailOneScreen({super.key});
+  final String homeTeamName;
+  final String awayTeamName;
+  final String homeTeamLogo;
+  final String awayTeamLogo;
+  final String finalScore;
+  final String leagueName;
+  final List<StatusItem> statusItems;
+
+  const TeamDetailOneScreen({
+    super.key,
+    required this.homeTeamName,
+    required this.awayTeamName,
+    required this.homeTeamLogo,
+    required this.awayTeamLogo,
+    required this.finalScore,
+    required this.leagueName,
+    required this.statusItems,
+  });
+
 
   @override
   State<TeamDetailOneScreen> createState() => _TeamDetailOneScreenState();
@@ -64,12 +83,12 @@ class _TeamDetailOneScreenState extends State<TeamDetailOneScreen> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                const Text(
-                                  "English Premier League",
+                                Text(
+                                  widget.leagueName,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: whiteColor,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
@@ -117,11 +136,11 @@ class _TeamDetailOneScreenState extends State<TeamDetailOneScreen> {
                                     "assets/main_images/team2.png",
                                   ),
                                   const SizedBox(height: 4),
-                                  const Text(
-                                    "Liverpool",
+                                  Text(
+                                    widget.homeTeamName,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: whiteColor,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -185,11 +204,11 @@ class _TeamDetailOneScreenState extends State<TeamDetailOneScreen> {
                                     "assets/main_images/team2.png",
                                   ),
                                   const SizedBox(height: 4),
-                                  const Text(
-                                    "Aston Villa",
+                                  Text(
+                                    widget.awayTeamName,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: whiteColor,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -249,13 +268,18 @@ class _TeamDetailOneScreenState extends State<TeamDetailOneScreen> {
                     ],
                   ),
                 ),
-                const Expanded(
+                Expanded(
                   child: TabBarView(
                     children: [
-                      OverviewTab(),
-                      LineUpTab(),
-                      StatsTab(),
-                      TableTab(),
+                      OverviewTab(
+                        homeTeamName: widget.homeTeamName,
+                        awayTeamName: widget.awayTeamName,
+                        finalScore: widget.finalScore,
+                        statusItems: widget.statusItems,
+                      ),
+                      const LineUpTab(),
+                      const StatsTab(),
+                      const TableTab(),
                     ],
                   ),
                 )

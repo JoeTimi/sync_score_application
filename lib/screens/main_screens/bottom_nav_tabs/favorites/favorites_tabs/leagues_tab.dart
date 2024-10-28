@@ -44,7 +44,7 @@ class _LeaguesTabState extends State<LeaguesTab> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (BuildContext context) =>
-                        const TeamDetailTwoScreen(),
+                        const TeamDetailTwoScreen(leagueName: '', leagueLogo: '', countryName: '',  countryLogo: '',),
                       ),
                     );
                   },

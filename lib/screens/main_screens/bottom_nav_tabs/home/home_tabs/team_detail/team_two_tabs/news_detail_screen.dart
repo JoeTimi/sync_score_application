@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,6 +13,7 @@ class NewsDetailScreen extends StatefulWidget {
   final String title;
   final String description;
   final String imageUrl; // URL for the image if needed
+
 
   const NewsDetailScreen ({
     super.key,
@@ -26,23 +29,38 @@ class NewsDetailScreen extends StatefulWidget {
 
 class _NewsDetailScreenState extends State<NewsDetailScreen> {
   late VideoPlayerController _controller;
-  late ChewieController _chewieController;
+  ChewieController? _chewieController;
+  bool _isError = false;
+
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
-    _controller.initialize().then((_) {
-      setState(() {
-        _chewieController = ChewieController(
+    if (widget.videoUrl.isNotEmpty){
+      _initializeVideoPlayer();
+    }
+  }
+
+  Future<void> _initializeVideoPlayer() async {
+    try{
+      _controller = VideoPlayerController.network(widget.videoUrl);
+      await _controller.initialize();
+      if (mounted) {
+        setState(() {
+          _chewieController = ChewieController(
             videoPlayerController: _controller,
             autoPlay: true,
             aspectRatio: _controller.value.aspectRatio,
             looping: false,
-        );
+          );
+        });
+      }
+    } catch (error) {
+      setState(() {
+        _isError = true;
       });
-    });
-
+      debugPrint('Error initializing video player: $e');
+    }
   }
 
 
@@ -146,9 +164,15 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        Chewie(
-                          controller: _chewieController,
-                        ),
+                        if (widget.videoUrl.isNotEmpty && !_isError)
+                          _chewieController != null
+                        ? Chewie(controller: _chewieController!,)
+                              : const CircularProgressIndicator()
+                        else if (_isError)
+                          const Text(
+                            'Error loading video',
+                            style: TextStyle(color: Colors.red),
+                          ),
                       ],
                     ),
                   ),
@@ -163,7 +187,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     @override
     void dispose() {
       _controller.dispose();
-      _chewieController.dispose();
+      _chewieController?.dispose();
       super.dispose();
     }
 }

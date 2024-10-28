@@ -79,7 +79,7 @@ class _FavTeamOverviewTabState extends State<FavTeamOverviewTab> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (BuildContext context) =>
-                            const TeamDetailTwoScreen(),
+                            const TeamDetailTwoScreen(leagueName: '', leagueLogo: '', countryName: '', countryLogo: '',),
                       ),
                     );
                   },

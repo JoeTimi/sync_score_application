@@ -158,7 +158,7 @@ class TitleWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14),
         child: Row(
           children: <Widget>[
-            Image.asset(
+            Image.network(
               height: 24,
               width: 24,
               logo,
@@ -175,7 +175,11 @@ class TitleWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            SvgPicture.asset(flag),
+            SvgPicture.network(
+              flag,
+              height: 16,
+              width: 16,
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -190,7 +194,9 @@ class TitleWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            SvgPicture.asset(lastIcon),
+            SvgPicture.asset(
+              lastIcon,
+            ),
           ],
         ),
       ),
@@ -294,7 +300,7 @@ class LeagueItemsWidget extends StatelessWidget {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      Image.asset(
+                      Image.network(
                         height: 16,
                         width: 16,
                         tOneLogo,
@@ -328,7 +334,7 @@ class LeagueItemsWidget extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: <Widget>[
-                      Image.asset(
+                      Image.network(
                         height: 16,
                         width: 16,
                         tTwoLogo,

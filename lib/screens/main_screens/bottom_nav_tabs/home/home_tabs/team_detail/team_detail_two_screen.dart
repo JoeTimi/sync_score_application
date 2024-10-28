@@ -10,7 +10,18 @@ import 'package:sync_score_application/screens/main_screens/bottom_nav_tabs/home
 import 'team_two_tabs/news_tab.dart';
 
 class TeamDetailTwoScreen extends StatefulWidget {
-  const TeamDetailTwoScreen({super.key});
+  final String leagueName;
+  final String leagueLogo;
+  final String countryName;
+  final String countryLogo;
+
+  const TeamDetailTwoScreen({
+    required this.leagueName,
+    required this.leagueLogo,
+    required this.countryName,
+    required this.countryLogo,
+  });
+
 
   @override
   State<TeamDetailTwoScreen> createState() => _TeamDetailTwoScreenState();
@@ -69,7 +80,7 @@ class _TeamDetailTwoScreenState extends State<TeamDetailTwoScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                "International",
+                                widget.countryName,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -79,8 +90,8 @@ class _TeamDetailTwoScreenState extends State<TeamDetailTwoScreen> {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              const Text(
-                                "English Premier League",
+                              Text(
+                                widget.leagueName,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(

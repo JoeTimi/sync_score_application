@@ -188,7 +188,7 @@ class _NewsNewsTabState extends State<NewsNewsTab> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) =>
-                    const NewsDetailScreen(videoUrl: '', title: '', description: '', imageUrl: '',),
+                    const NewsDetailScreen(title: '', description: '', imageUrl: '',),
                   ),
                 );
               },
