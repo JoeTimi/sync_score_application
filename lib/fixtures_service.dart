@@ -10,8 +10,8 @@ class FixtureService {
 
   Future<Fixtures> fetchFixtures() async {
     DateTime today = DateTime.now();
-    DateTime fromDate = today.subtract(const Duration(days: 5));
-    DateTime toDate = today.add(const Duration(days: 5));
+    DateTime fromDate = today.subtract(const Duration(days: 3));
+    DateTime toDate = today.add(const Duration(days: 3));
 
     String fromFormatted = DateFormat('yyyy-MM-dd').format(fromDate);
     String toFormatted = DateFormat('yyyy-MM-dd').format(toDate);

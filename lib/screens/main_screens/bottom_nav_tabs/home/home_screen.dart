@@ -64,7 +64,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   void _onTabChanged() {
-    setState(() {});
+    setState(() {
+      debugPrint('Current tab index ${_tabController.index}');
+    });
   }
 
   List<Result> getFilteredFixtures() {
@@ -72,9 +74,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       case 0: // "All"
         return fixturesList;
       case 1: // "Live"
-        return fixturesList.where((fixture) => fixture.eventLive == 'Live').toList();
+        return fixturesList.where((fixture) => fixture.eventLive == '1' || fixture.eventLive == 'Live').toList();
       case 2: // "Upcoming"
-        return fixturesList.where((fixture) => fixture.eventStatus == 'Upcoming').toList();
+        return fixturesList.where((fixture) => fixture.eventStatus == 'Upcoming' || fixture.eventStatus == 'waiting').toList();
+        // return fixturesList.where((fixture) => fixture.eventStatus == 'Upcoming').toList();
       case 3: // "Finished"
         return fixturesList.where((fixture) => fixture.eventStatus == 'Finished').toList();
       default:
@@ -82,12 +85,41 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     }
   }
 
+  // List<Result> getFilteredFixtures() {
+  //   switch (_tabController.index) {
+  //     case 0: // "All"
+  //       return fixturesList;
+  //     case 1: // "Live"
+  //       fixturesList.forEach((fixture) {
+  //         debugPrint('Fixture Live Status: ${fixture.eventLive}');
+  //       });
+  //       final liveFixtures = fixturesList.where((fixture) => fixture.eventLive == '1').toList();
+  //       debugPrint('Live Fixtures: ${liveFixtures.length}');
+  //       return liveFixtures;
+  //     case 2: // "Upcoming"
+  //       fixturesList.forEach((fixture) {
+  //         debugPrint('Fixture Status: ${fixture.eventStatus}');
+  //       });
+  //       final upcomingFixtures = fixturesList.where((fixture) => fixture.eventStatus == 'waiting').toList();
+  //       debugPrint('Upcoming Fixtures: ${upcomingFixtures.length}');
+  //       return upcomingFixtures;
+  //     case 3: // "Finished"
+  //       final finishedFixtures = fixturesList.where((fixture) => fixture.eventStatus == 'Finished').toList();
+  //       debugPrint('Finished Fixtures: ${finishedFixtures.length}');
+  //       return finishedFixtures;
+  //     default:
+  //       return fixturesList;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     Map<String, List<Result>> fixturesByLeague = {};
 
-    for (var fixture in fixturesList) {
+    // Filter the fixtures based on the selected tab
+    List<Result> filteredFixtures = getFilteredFixtures();
+
+    for (var fixture in filteredFixtures) {
       final leagueName = fixture.leagueName ?? 'Unknown League';
       fixturesByLeague.putIfAbsent(leagueName, () => []).add(fixture);
     }
@@ -258,10 +290,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       },
                     ),
                     ...leagueFixtures.map((fixture) {
-                      // Parse final score
-                      String eventFinalResult = (fixture.eventFinalResult ?? "0 - 0").toString();
+                      // Convert the enum value to a score string using eventFinalResultValues
+                      String eventFinalResultScore = eventFinalResultValues.reverse[fixture.eventFinalResult] ?? "0 - 0";
 
-                      List<String> scores = eventFinalResult.split(" - ");
+                      List<String> scores = eventFinalResultScore.split(" - ");
 
                       // Debugging logs
                       // debugPrint('Event Final Result: $eventFinalResult');
@@ -272,8 +304,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       int awayPoints = 0;
 
                       if (scores.length == 2) {
-                        homePoints = int.tryParse(scores[00].trim()) ?? 0;
-                        awayPoints = int.tryParse(scores[01].trim()) ?? 0;
+                        homePoints = int.tryParse(scores[0].trim()) ?? 0;
+                        awayPoints = int.tryParse(scores[1].trim()) ?? 0;
                       } else {
                         debugPrint('Score parsing failed for fixture: ${fixture.eventHomeTeam} vs ${fixture.eventAwayTeam}');
                       }
@@ -285,10 +317,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         tOneName: fixture.eventHomeTeam ?? 'Home Team',
                         tTwoLogo: fixture.awayTeamLogo ?? 'assets/default_logo.png',
                         tTwoName: fixture.eventAwayTeam ?? 'Away Team',
-                        // tOnePoints: homePoints.toString(),
-                        // tTwoPoints: awayPoints.toString(),
-                        tOnePoints: (fixture.homeGoals ?? 'N/A').toString(),
-                        tTwoPoints: (fixture.awayGoals ?? 'N/A').toString(),
+                        tOnePoints: homePoints.toString(),
+                        tTwoPoints: awayPoints.toString(),
+                        // tOnePoints: (fixture.homeGoals ?? 'N/A').toString(),
+                        // tTwoPoints: (fixture.awayGoals ?? 'N/A').toString(),
                         isLive: fixture.eventLive == '1',
                         isStared: false,
                         onTap: () {
@@ -299,9 +331,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 awayTeamName: fixture.eventAwayTeam ?? 'Away Team',
                                 homeTeamLogo: fixture.homeTeamLogo ?? 'assets/default_logo.png',
                                 awayTeamLogo: fixture.awayTeamLogo ?? 'assets/default_logo.png',
-                                finalScore: (fixture.eventFinalResult ?? "0 - 0").toString(),
+                                finalScore: eventFinalResultScore,
                                 leagueName: fixture.leagueName ?? 'League Name',
-                                statusItems: [], // Assuming you want to show the final score),
+                                statusItems: getStatusItems(fixture), // Assuming you want to show the final score),
 
                               ),
                             ),

@@ -169,8 +169,8 @@ class _TeamDetailOneScreenState extends State<TeamDetailOneScreen> {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              const Text(
-                                "3-0",
+                              Text(
+                                widget.finalScore,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(

@@ -140,7 +140,6 @@ class Result {
       stageName: json["stage_name"],
       leagueGroup: json["league_group"],
       // goalscorers: json["goalscorers"] == null ? [] : List<Goalscorer>.from(json["goalscorers"].map((x) => Goalscorer.fromJson(x))),
-      // goalscorers: json["goalscorers"] == null ? [] : List<Goalscorer>.from(json["goalscorers"].map((x) => Goalscorer.fromJson(x))),
       substitutes: json["substitutes"] == null ? [] : List<Substitute>.from(json["substitutes"].map((x) => Substitute.fromJson(x))),
       cards: json["cards"] == null ? [] : List<CardElement>.from(json["cards"].map((x) => CardElement.fromJson(x))),
       // vars: json["vars"] == null ? null : Vars.fromJson(json["vars"]),
